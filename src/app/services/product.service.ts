@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { delay, Observable, tap } from 'rxjs';
+import { delay, map, Observable, tap } from 'rxjs';
 import { Product } from '../products/product.interface';
 
 @Injectable({
@@ -15,13 +15,20 @@ export class ProductService {
     this.initProducts();
   }
 
+  getProductById(id: number): Observable<Product> {
+    return this
+            .products$
+            .pipe(
+              map(products => products.find(product => product.id == id))
+            )
+  }
+
   initProducts() {
     this.products$ = this
                       .http
                       .get<Product[]>(this.baseUrl)
                       .pipe(
-                        tap(console.table),
-                        delay(1500) // faux delai...
+                        tap(console.table)
                       );
   }
 
